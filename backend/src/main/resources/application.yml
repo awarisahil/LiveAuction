@@ -1,0 +1,14 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: auction-backend
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: 6379
+
+auction:
+  idempotency-ttl-seconds: 86400
+  recent-bids-limit: 50
