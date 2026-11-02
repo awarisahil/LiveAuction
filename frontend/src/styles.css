@@ -1,0 +1,75 @@
+:root {
+  color-scheme: dark;
+  --bg: #0f1115;
+  --panel: #171a21;
+  --panel-2: #1e222b;
+  --text: #e8eaf0;
+  --muted: #9aa3b2;
+  --accent: #f0b429;
+  --green: #2fbf71;
+  --red: #e5484d;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); }
+button { cursor: pointer; font: inherit; }
+input { font: inherit; }
+h1 { font-size: 1.4rem; margin: 0; cursor: pointer; }
+h2 { margin: 0 0 0.25rem; }
+h3 { margin: 1.25rem 0 0.5rem; }
+
+.app { max-width: 1000px; margin: 0 auto; padding: 1rem 1.25rem 3rem; }
+header { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0 1.25rem; }
+.who { color: var(--muted); font-size: 0.9rem; }
+.link { background: none; border: none; color: var(--accent); padding: 0; }
+.muted { color: var(--muted); }
+.error { color: var(--red); }
+.empty { color: var(--muted); }
+
+.entry { max-width: 420px; margin: 15vh auto; text-align: center; }
+.entry form { display: flex; gap: 0.5rem; margin-top: 1rem; }
+.entry input { flex: 1; padding: 0.6rem 0.75rem; border-radius: 8px; border: 1px solid #2c313c; background: var(--panel); color: var(--text); }
+
+button:not(.link):not(.ghost) {
+  background: var(--accent); color: #1a1a1a; border: none; border-radius: 8px;
+  padding: 0.6rem 1rem; font-weight: 600;
+}
+button:disabled { opacity: 0.55; cursor: default; }
+button.ghost { background: var(--panel-2); color: var(--text); border: 1px solid #2c313c; border-radius: 8px; padding: 0.6rem 0.8rem; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+.card { background: var(--panel); border: 1px solid #232833; border-radius: 12px; padding: 1.25rem; cursor: pointer; transition: border-color 0.15s; }
+.card:hover { border-color: var(--accent); }
+.card-emoji { font-size: 2.5rem; }
+.card-emoji.large { font-size: 4rem; }
+.card-body h3 { margin: 0.5rem 0 0.25rem; }
+.price { font-size: 1.25rem; font-weight: 700; color: var(--accent); margin: 0.25rem 0; }
+.price.big { font-size: 1.8rem; }
+
+.badge { display: inline-block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; padding: 0.2rem 0.55rem; border-radius: 999px; }
+.badge-live { background: rgba(47, 191, 113, 0.15); color: var(--green); }
+.badge-ended { background: rgba(154, 163, 178, 0.15); color: var(--muted); }
+.card-ended { opacity: 0.75; }
+
+.detail-head { display: flex; gap: 1.5rem; align-items: flex-start; margin-top: 1rem; background: var(--panel); border: 1px solid #232833; border-radius: 12px; padding: 1.5rem; }
+.countdown { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--green); }
+.countdown.ended { color: var(--muted); }
+
+.bid-form { margin-top: 1rem; background: var(--panel); border: 1px solid #232833; border-radius: 12px; padding: 1rem 1.25rem; }
+.bid-row { display: flex; align-items: center; gap: 0.5rem; }
+.bid-row label { color: var(--muted); }
+.bid-row input { width: 130px; padding: 0.6rem 0.75rem; border-radius: 8px; border: 1px solid #2c313c; background: var(--panel-2); color: var(--text); }
+
+.pay-box { margin-top: 1rem; background: rgba(47, 191, 113, 0.08); border: 1px solid rgba(47, 191, 113, 0.35); border-radius: 12px; padding: 1rem 1.25rem; }
+
+.bids { list-style: none; margin: 0; padding: 0; background: var(--panel); border: 1px solid #232833; border-radius: 12px; overflow: hidden; }
+.bids li { display: flex; justify-content: space-between; gap: 1rem; padding: 0.65rem 1rem; border-bottom: 1px solid #20252f; font-variant-numeric: tabular-nums; }
+.bids li:last-child { border-bottom: none; }
+.bids li.mine { background: rgba(240, 180, 41, 0.07); }
+
+.toasts { position: fixed; top: 1rem; right: 1rem; display: flex; flex-direction: column; gap: 0.5rem; z-index: 50; }
+.toast { background: var(--panel-2); border: 1px solid #2c313c; border-left: 4px solid var(--accent); border-radius: 8px; padding: 0.7rem 1rem; max-width: 340px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35); }
+.toast-success { border-left-color: var(--green); }
+.toast-error { border-left-color: var(--red); }
+.toast-warn { border-left-color: var(--accent); }
