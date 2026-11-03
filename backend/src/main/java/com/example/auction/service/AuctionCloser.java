@@ -5,7 +5,7 @@ import com.example.auction.model.Auction;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.script.DefaultRedisScript;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -51,7 +51,7 @@ public class AuctionCloser {
                 if (auction.getEndsAt() > now) continue;
 
                 List<Object> result = redis.execute(claimEndScript,
-                        List.of(AuctionService.stateKey(id)), now);
+                        List.of(AuctionService.stateKey(id)), String.valueOf(now));
                 long code = ((Number) result.get(0)).longValue();
                 if (code != 1) continue; // another scheduler instance claimed it
 

@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { pay } from '../api';
+import { newIdemKey, pay } from '../api';
 import { useToast } from '../toast';
 
 export default function PayButton({ auctionId, bidder, onPaid }) {
@@ -7,7 +7,7 @@ export default function PayButton({ auctionId, bidder, onPaid }) {
   const [pending, setPending] = useState(false);
   const [receipt, setReceipt] = useState(null);
   const [error, setError] = useState('');
-  const idemKey = useRef(crypto.randomUUID());
+  const idemKey = useRef(newIdemKey());
 
   const submit = async () => {
     setPending(true);

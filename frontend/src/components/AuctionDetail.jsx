@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { getAuction, placeBid } from '../api';
+import { getAuction, newIdemKey, placeBid } from '../api';
 import { subscribe } from '../ws';
 import { useToast } from '../toast';
 import Countdown from './Countdown';
@@ -14,7 +14,7 @@ export default function AuctionDetail({ id, bidder, onBack }) {
   const [loadError, setLoadError] = useState('');
   const [bidError, setBidError] = useState('');
   const [pending, setPending] = useState(false);
-  const idemKey = useRef(crypto.randomUUID());
+  const idemKey = useRef(newIdemKey());
   const prevLeader = useRef(null);
 
   useEffect(() => {

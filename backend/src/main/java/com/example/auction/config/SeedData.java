@@ -37,7 +37,8 @@ public class SeedData {
                         "currentBidCents", String.valueOf(a.getCurrentBidCents()),
                         "minIncrementCents", String.valueOf(a.getMinIncrementCents()),
                         "status", a.getStatus(),
-                        "bidCount", "0"));
+                        "bidCount", "0",
+                        "endsAt", String.valueOf(a.getEndsAt())));
                 redis.opsForSet().add(AuctionService.ACTIVE_INDEX, a.getId());
             }
         };

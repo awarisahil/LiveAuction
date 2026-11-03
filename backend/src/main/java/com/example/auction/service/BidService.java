@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.script.DefaultRedisScript;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -64,10 +64,10 @@ public class BidService {
                         AuctionService.bidsKey(auctionId)),
                 bidId,
                 bidder,
-                amountCents,
-                now,
-                idemTtlSeconds,
-                recentBidsLimit);
+                String.valueOf(amountCents),
+                String.valueOf(now),
+                String.valueOf(idemTtlSeconds),
+                String.valueOf(recentBidsLimit));
 
         long code = ((Number) result.get(0)).longValue();
         String payload = String.valueOf(result.get(1));

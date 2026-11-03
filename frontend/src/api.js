@@ -1,7 +1,14 @@
+export function newIdemKey() {
+  return crypto.randomUUID
+    ? crypto.randomUUID()
+    : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+}
+
 async function request(path, options = {}) {
+  const { headers, ...rest } = options;
   const res = await fetch(`/api${path}`, {
-    headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
-    ...options,
+    ...rest,
+    headers: { 'Content-Type': 'application/json', ...headers },
   });
   const body = await res.json().catch(() => ({}));
   if (!res.ok) {

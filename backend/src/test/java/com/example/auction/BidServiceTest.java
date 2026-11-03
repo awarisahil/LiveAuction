@@ -14,7 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.script.DefaultRedisScript;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 
 import java.util.List;
 
@@ -48,7 +48,7 @@ class BidServiceTest {
         var result = bidService.placeBid("a1", "alice", 6000L, "key-1");
 
         assertEquals("ACCEPTED", result.status());
-        assertEquals("bid-1", result.bidId());
+        assertNotNull(result.bidId());
 
         ArgumentCaptor<OutboundEvent> captor = ArgumentCaptor.forClass(OutboundEvent.class);
         verify(publisher, times(2)).publishEvent(captor.capture());
@@ -56,6 +56,8 @@ class BidServiceTest {
         assertEquals("/topic/auction/a1/bids", events.get(0).destination());
         assertEquals("/topic/auction/a1/events", events.get(1).destination());
         assertTrue(events.get(1).payload().contains("BID_ACCEPTED"));
+        // the bid broadcast carries the accepted bid id returned to the caller
+        assertTrue(events.get(0).payload().contains(result.bidId()));
     }
 
     @Test

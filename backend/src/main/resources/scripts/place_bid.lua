@@ -27,6 +27,13 @@ if status ~= 'ACTIVE' then
     return {-2, status}
 end
 
+-- Reject bids arriving after the deadline even if the scheduler has not
+-- flipped the status yet (scheduler tick gap).
+local endsAt = tonumber(redis.call('HGET', KEYS[1], 'endsAt'))
+if endsAt and tonumber(ARGV[4]) > endsAt then
+    return {-2, 'ENDED'}
+end
+
 local current = tonumber(redis.call('HGET', KEYS[1], 'currentBidCents')) or 0
 local minInc = tonumber(redis.call('HGET', KEYS[1], 'minIncrementCents')) or 1
 local amount = tonumber(ARGV[3])
