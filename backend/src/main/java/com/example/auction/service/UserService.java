@@ -74,7 +74,7 @@ public class UserService {
         if (target.getId().equals(admin.id())) {
             throw new AuctionExceptions.ValidationException("You cannot modify your own account");
         }
-        if (target.isAdmin() && (banned != null || (role != null && !"ADMIN".equals(role)))) {
+        if ("ADMIN".equals(target.getRole()) && (banned != null || (role != null && !"ADMIN".equals(role)))) {
             throw new AuctionExceptions.ForbiddenException("Other admins cannot be modified");
         }
         if (role != null) {

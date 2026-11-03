@@ -31,6 +31,7 @@ public final class AuctionExceptions {
 
     public static class UnauthorizedException extends RuntimeException {
         public UnauthorizedException() { super("Authentication required"); }
+        public UnauthorizedException(String message) { super(message); }
     }
 
     public static class ForbiddenException extends RuntimeException {

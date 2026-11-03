@@ -1,10 +1,12 @@
 package com.example.auction.controller;
 
+import com.example.auction.auth.Auth;
 import com.example.auction.dto.BidResult;
 import com.example.auction.dto.PlaceBidRequest;
 import com.example.auction.model.Auction;
 import com.example.auction.service.AuctionService;
 import com.example.auction.service.BidService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,10 +30,12 @@ public class BidController {
     }
 
     @PostMapping
-    public BidResponse place(@PathVariable String id,
-                             @Valid @RequestBody PlaceBidRequest request,
+    public BidResponse place(HttpServletRequest request,
+                             @PathVariable String id,
+                             @Valid @RequestBody PlaceBidRequest body,
                              @RequestHeader(value = "Idempotency-Key", required = false) String idempotencyKey) {
-        BidResult result = bidService.placeBid(id, request.bidder(), request.amountCents(), idempotencyKey);
+        var auth = Auth.require(request);
+        BidResult result = bidService.placeBid(id, body.amountCents(), auth, idempotencyKey);
         Auction auction = auctionService.get(id);
         return new BidResponse(result, auction, Instant.now().toEpochMilli());
     }
