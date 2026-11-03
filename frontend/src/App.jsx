@@ -1,83 +1,39 @@
-import { useEffect, useState } from 'react';
-import { listAuctions } from './api';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { AuthProvider, useAuth } from './auth';
 import { ToastProvider } from './toast';
-import AuctionCard from './components/AuctionCard';
-import AuctionDetail from './components/AuctionDetail';
+import Navbar from './components/Navbar';
+import HomePage from './pages/HomePage';
+import AuctionPage from './pages/AuctionPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import ProfilePage from './pages/ProfilePage';
+import SellPage from './pages/SellPage';
+import AdminPage from './pages/AdminPage';
+import UserPage from './pages/UserPage';
 
-function Shell() {
-  const [bidder, setBidder] = useState(() => localStorage.getItem('bidder') || '');
-  const [name, setName] = useState(bidder);
-  const [selected, setSelected] = useState(null);
-  const [auctions, setAuctions] = useState([]);
+function RequireAuth({ children, adminOnly = false, sellerOnly = false }) {
+  const { user } = useAuth();
+  if (!user) return <Navigate to="/login" replace />;
+  if (adminOnly && user.role !== 'ADMIN') return <Navigate to="/" replace />;
+  if (sellerOnly && user.role !== 'SELLER' && user.role !== 'ADMIN') return <Navigate to="/" replace />;
+  return children;
+}
 
-  useEffect(() => {
-    let alive = true;
-    const load = () =>
-      listAuctions()
-        .then((d) => alive && setAuctions(d.auctions))
-        .catch(() => {});
-    load();
-    const timer = setInterval(load, 5000);
-    return () => {
-      alive = false;
-      clearInterval(timer);
-    };
-  }, []);
-
-  if (!bidder) {
-    return (
-      <div className="entry">
-        <h1>Live Auctions</h1>
-        <p className="muted">Pick a bidder name to join the floor.</p>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            const value = name.trim();
-            if (!value) return;
-            localStorage.setItem('bidder', value);
-            setBidder(value);
-          }}
-        >
-          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Bidder name" autoFocus />
-          <button type="submit">Enter</button>
-        </form>
-      </div>
-    );
-  }
-
-  const back = () => {
-    setSelected(null);
-    listAuctions().then((d) => setAuctions(d.auctions)).catch(() => {});
-  };
-
+function Layout() {
   return (
     <div className="app">
-      <header>
-        <h1 onClick={back}>Live Auctions</h1>
-        <div className="who">
-          Bidding as <strong>{bidder}</strong>{' '}
-          <button
-            className="link"
-            onClick={() => {
-              localStorage.removeItem('bidder');
-              setBidder('');
-              setName('');
-            }}
-          >
-            switch
-          </button>
-        </div>
-      </header>
-      {selected ? (
-        <AuctionDetail id={selected} bidder={bidder} onBack={back} />
-      ) : (
-        <main className="grid">
-          {auctions.map((a) => (
-            <AuctionCard key={a.id} auction={a} onOpen={() => setSelected(a.id)} />
-          ))}
-          {auctions.length === 0 && <p className="empty">No live auctions right now — check back soon.</p>}
-        </main>
-      )}
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/auction/:id" element={<AuctionPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/user/:id" element={<UserPage />} />
+        <Route path="/profile" element={<RequireAuth><ProfilePage /></RequireAuth>} />
+        <Route path="/sell" element={<RequireAuth sellerOnly><SellPage /></RequireAuth>} />
+        <Route path="/admin" element={<RequireAuth adminOnly><AdminPage /></RequireAuth>} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </div>
   );
 }
@@ -85,7 +41,11 @@ function Shell() {
 export default function App() {
   return (
     <ToastProvider>
-      <Shell />
+      <AuthProvider>
+        <BrowserRouter>
+          <Layout />
+        </BrowserRouter>
+      </AuthProvider>
     </ToastProvider>
   );
 }
