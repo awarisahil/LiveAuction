@@ -7,8 +7,8 @@
 -- KEYS[1] = auction:{id}:state
 -- KEYS[2] = auction:idem:{key}      (idempotency slot for this payment attempt)
 -- KEYS[3] = auction:{id}:payment    (receipt, set once)
--- KEYS[4] = user:{payerId}          (hash: balanceCents)
--- KEYS[5] = user:{sellerId}         (hash: balanceCents)
+-- KEYS[4] = wallet:{payerId}        (hash: balanceCents)
+-- KEYS[5] = wallet:{sellerId}       (hash: balanceCents)
 --
 -- ARGV[1] = receiptId
 -- ARGV[2] = payer user id

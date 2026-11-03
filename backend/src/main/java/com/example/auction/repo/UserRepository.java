@@ -24,6 +24,7 @@ public class UserRepository {
     }
 
     public static String key(String id) { return "user:" + id; }
+    public static String walletKey(String id) { return "wallet:" + id; }
     public static String emailKey(String email) { return "user:email:" + email.toLowerCase(); }
     public static String bidsKey(String id) { return "user:" + id + ":bids"; }
     public static String paymentsKey(String id) { return "user:" + id + ":payments"; }
@@ -40,15 +41,22 @@ public class UserRepository {
         return get(id);
     }
 
-    /** Creates or updates the user plus the email index. */
+    /** Creates or updates the user plus the email index and wallet (created with 0 balance). */
     public void save(User user) {
         try {
             redis.opsForValue().set(key(user.getId()), om.writeValueAsString(user));
             redis.opsForValue().set(emailKey(user.getEmail()), user.getId());
             redis.opsForSet().add(INDEX, user.getId());
+            redis.opsForHash().putIfAbsent(walletKey(user.getId()), "balanceCents", "0");
         } catch (Exception e) {
             throw new IllegalStateException("Failed to save user " + user.getId(), e);
         }
+    }
+
+    /** Wallet balance from the dedicated hash (atomic-modifiable). */
+    public long balance(String id) {
+        Object value = redis.opsForHash().get(walletKey(id), "balanceCents");
+        return value == null ? 0 : Long.parseLong(value.toString());
     }
 
     public List<User> listAll() {

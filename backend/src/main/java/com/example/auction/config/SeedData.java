@@ -78,6 +78,7 @@ public class SeedData {
             redis.opsForValue().set(UserRepository.key(user.getId()), om.writeValueAsString(user));
             redis.opsForValue().set(UserRepository.emailKey(email), user.getId());
             redis.opsForSet().add(UserRepository.INDEX, user.getId());
+            redis.opsForHash().put(UserRepository.walletKey(user.getId()), "balanceCents", String.valueOf(balanceCents));
             return user.getId();
         } catch (Exception e) {
             throw new IllegalStateException("Failed to seed user " + email, e);

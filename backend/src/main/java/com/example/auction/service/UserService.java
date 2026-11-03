@@ -35,8 +35,10 @@ public class UserService {
     }
 
     public UserView profile(AuthUser auth) {
-        return users.get(auth.id()).map(UserView::of)
+        User user = users.get(auth.id())
                 .orElseThrow(AuctionExceptions.UnauthorizedException::new);
+        user.setBalanceCents(users.balance(auth.id()));
+        return UserView.of(user);
     }
 
     public UserView updateProfile(AuthUser auth, UpdateProfileRequest request) {
@@ -50,22 +52,26 @@ public class UserService {
 
     /** Simulated card processor: instantly credits the wallet. */
     public UserView deposit(AuthUser auth, long amountCents) {
-        User user = requireUser(auth.id());
+        requireUser(auth.id());
         if (amountCents < 100) {
             throw new AuctionExceptions.ValidationException("Minimum deposit is $1.00");
         }
         long newBalance = redis.opsForHash().increment(
-                UserRepository.key(auth.id()), "balanceCents", amountCents);
+                UserRepository.walletKey(auth.id()), "balanceCents", amountCents);
         if (newBalance > maxWalletCents) {
-            redis.opsForHash().increment(UserRepository.key(auth.id()), "balanceCents", -amountCents);
+            redis.opsForHash().increment(UserRepository.walletKey(auth.id()), "balanceCents", -amountCents);
             throw new AuctionExceptions.ValidationException("Wallet balance cap reached");
         }
-        user.setBalanceCents(newBalance);
-        return UserView.of(user);
+        return profile(auth);
     }
 
     public List<UserView> listAllForAdmin() {
-        return users.listAll().stream().map(UserView::of).toList();
+        return users.listAll().stream()
+                .map(u -> {
+                    u.setBalanceCents(users.balance(u.getId()));
+                    return UserView.of(u);
+                })
+                .toList();
     }
 
     public UserView adminUpdate(String userId, String role, Boolean banned, AuthUser admin) {
