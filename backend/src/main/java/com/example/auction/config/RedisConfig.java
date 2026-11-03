@@ -39,6 +39,14 @@ public class RedisConfig {
     }
 
     @Bean
+    public DefaultRedisScript<List<Object>> setStatusScript() {
+        DefaultRedisScript<List<Object>> script = new DefaultRedisScript<>();
+        script.setLocation(new ClassPathResource("scripts/set_status.lua"));
+        script.setResultType((Class<List<Object>>) (Class<?>) List.class);
+        return script;
+    }
+
+    @Bean
     public ChannelTopic auctionEventsTopic() {
         return new ChannelTopic("auction:events");
     }
