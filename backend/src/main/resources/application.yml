@@ -12,3 +12,8 @@ spring:
 auction:
   idempotency-ttl-seconds: 86400
   recent-bids-limit: 50
+  anti-snipe-ms: 30000
+  platform-fee-bps: 500
+  jwt-secret: ${JWT_SECRET:auction-platform-demo-secret-change-me-in-prod-0123456789}
+  jwt-ttl-hours: 24
+  max-wallet-cents: 100000000

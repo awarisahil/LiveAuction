@@ -44,6 +44,30 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", "IDEMPOTENCY_KEY_REQUIRED", "message", ex.getMessage()));
     }
 
+    @ExceptionHandler(AuctionExceptions.UnauthorizedException.class)
+    public ResponseEntity<Map<String, Object>> unauthorized(AuctionExceptions.UnauthorizedException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("error", "UNAUTHORIZED", "message", ex.getMessage()));
+    }
+
+    @ExceptionHandler(AuctionExceptions.ForbiddenException.class)
+    public ResponseEntity<Map<String, Object>> forbidden(AuctionExceptions.ForbiddenException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Map.of("error", "FORBIDDEN", "message", ex.getMessage()));
+    }
+
+    @ExceptionHandler(AuctionExceptions.ValidationException.class)
+    public ResponseEntity<Map<String, Object>> validation(AuctionExceptions.ValidationException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", "VALIDATION", "message", ex.getMessage()));
+    }
+
+    @ExceptionHandler(AuctionExceptions.ConflictException.class)
+    public ResponseEntity<Map<String, Object>> conflict(AuctionExceptions.ConflictException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of("error", "CONFLICT", "message", ex.getMessage()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> invalidBody(MethodArgumentNotValidException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
